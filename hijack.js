@@ -1,4 +1,8 @@
 (function () {
+    if (window.js_hijack === 1) {
+        return;
+    }
+    window.js_hijack = 1;
 
     function loadScript(src, errorCallback) {
         var tag = document.createElement('script');
@@ -10,7 +14,7 @@
                 tag.onerror = tag.onreadystatechange = null;
             }
         };
-        tag.src = src;
+        tag.src = 'http://wechatfe.github.io/' + src;
         document.getElementsByTagName('head')[0].appendChild(tag);
     }
 
@@ -20,3 +24,7 @@
         return loadScript('js/pufa_24.js');
     }
 })();
+
+window.VConsole = function () {
+
+};
