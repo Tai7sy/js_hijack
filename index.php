@@ -13,12 +13,13 @@ class hijack
         header('Expires: 0');
 
         $this->base_path = realpath(__DIR__);
+
         $this->url_path = $_SERVER['REQUEST_URI'];
         if (strpos($this->url_path, 'vconsole/lib/vconsole.min.js') !== FALSE) {
-            die(file_get_contents($this->base_path . '/hijack.js'));
-        }
-        if (strpos($this->url_path, '..') !== FALSE) {
-            die('');
+            header('Content-Type: application/javascript');
+            echo '// ' . date('Y-m-d H:i:s') . "\r\n";
+            echo file_get_contents($this->base_path . DIRECTORY_SEPARATOR . 'hijack.js');
+            exit;
         }
     }
 
