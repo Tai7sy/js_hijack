@@ -17,6 +17,6 @@
 
     var url = location.href;
     if (url.indexOf('weixin.spdbccc.com.cn/wxrp-page-arithmetic/arithmeticGameIndex') > -1) {
-        return loadScript('pufa_24.js');
+        return loadScript('js/pufa_24.js');
     }
 })();
