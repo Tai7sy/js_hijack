@@ -4,16 +4,23 @@
  */
 
 function gen_rand() {
-    var num1 = 2, num2 = 3, num3 = 4, num4 = 5;
+    var num1 = 2, num2 = 3, num3 = 4, num4 = 10;
     Cookies.set("wxrpCookArithmeticFisrtNum", num1);
     Cookies.set("wxrpCookArithmeticTwoNum", num2);
     Cookies.set("wxrpCookArithmeticThreeNum", num3);
     Cookies.set("wxrpCookArithmeticFourNum", num4);
 
+    Cookies.set("wxrpCookArithmeticFisrtColor", 'd' + num1);
+    Cookies.set("wxrpCookArithmeticTwoColor", 'd' + num2);
+    Cookies.set("wxrpCookArithmeticThreeColor", 'd' + num3);
+    Cookies.set("wxrpCookArithmeticFourColor", 'd' + num4);
+
     var pm1 = "https://weixin.spdbccc.com.cn/wxrp-page-arithmetic/arithmetic/img3/d" + num1 + ".png";
-    var pm2 = "https://weixin.spdbccc.com.cn/wxrp-page-arithmetic/arithmetic/img3/d" + num2 + ".jpg";
-    var pm3 = "https://weixin.spdbccc.com.cn/wxrp-page-arithmetic/arithmetic/img3/d" + num3 + ".jpg";
-    var pm4 = "https://weixin.spdbccc.com.cn/wxrp-page-arithmetic/arithmetic/img3/d" + num4 + ".jpg";
+    var pm2 = "https://weixin.spdbccc.com.cn/wxrp-page-arithmetic/arithmetic/img3/d" + num2 + ".png";
+    var pm3 = "https://weixin.spdbccc.com.cn/wxrp-page-arithmetic/arithmetic/img3/d" + num3 + ".png";
+    var pm4 = "https://weixin.spdbccc.com.cn/wxrp-page-arithmetic/arithmetic/img3/d" + num4 + ".png";
+
+
     $("#barrage1 img").attr("src", pm1);
     $("#barrage2 img").attr("src", pm2);
     $("#barrage3 img").attr("src", pm3);
@@ -77,11 +84,19 @@ function autoSolve() {
         if (ret) {
             // 化简结果, 去除多余 ()
             var test;
-            if (test = /\((\(\d[\+\-]\d\))[\+\-]\d\)/.exec(ret)) {
+            if (test = /\((\(\d+[\+\-]\d+\))[\+\-]\d+\)/.exec(ret)) {
                 ret = ret.replace(test[1], test[1].replace(/[\(\)]/g, ''))
             }
 
-            if (test = /\(\d[\+\-](\(\d[\+\-]\d\))\)/.exec(ret)) {
+            if (test = /\(\d+[\+\-](\(\d+[\+\-]\d+\))\)/.exec(ret)) {
+                ret = ret.replace(test[1], test[1].replace(/[\(\)]/g, ''))
+            }
+
+            if (test = /\((\(\d+[\*\/]\d+\))[\*\/]\d+\)/.exec(ret)) {
+                ret = ret.replace(test[1], test[1].replace(/[\(\)]/g, ''))
+            }
+
+            if (test = /\(\d+[\*\/](\(\d+[\*\/]\d+\))\)/.exec(ret)) {
                 ret = ret.replace(test[1], test[1].replace(/[\(\)]/g, ''))
             }
         }
@@ -150,7 +165,7 @@ function autoSolve() {
         }
         used.push(iNum);
 
-        var numberTrue = '',numberEncrypt = '';
+        var numberTrue = '', numberEncrypt = '';
         if (iNum === 0) {
             numberTrue = Cookies.get("wxrpCookArithmeticFisrtColor");
             numberEncrypt = Cookies.get("wxrpCookArithmeticFisrtNum");
@@ -194,7 +209,6 @@ function autoSolve() {
     console.log('[solved] ' + result);
 
     for (var i = 0, numIndex = 0, opIndex = 0; i < result.length; i++) {
-        console.log('                  [ret] ' + result[i]);
         if (/\d/.test(result[i])) {
             if (numIndex === 0) {
                 opIndex = 1; // 第0个数字框 后面
@@ -205,8 +219,13 @@ function autoSolve() {
             } else if (numIndex === 3) {
                 opIndex = 8;
             }
-            console.log('[addNumber] ' + result[i]);
-            addNumber(numIndex++, result[i]);
+            var nowNumber = result[i];
+            if (/\d/.test(result[i + 1])) {
+                nowNumber = nowNumber + '' + result[i + 1];
+                i++;
+            }
+            console.log('[addNumber] ' + nowNumber);
+            addNumber(numIndex++, nowNumber);
         } else {
             // console.log('[addOperator] ' + result[i]);
             addOperator(opIndex++, result[i])
