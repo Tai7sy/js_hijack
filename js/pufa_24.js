@@ -10,10 +10,10 @@ function gen_rand() {
     Cookies.set("wxrpCookArithmeticThreeNum", num3);
     Cookies.set("wxrpCookArithmeticFourNum", num4);
 
-    var pm1 = "http://wechatfe.github.io/delete/" + num1 + ".jpg";
-    var pm2 = "http://wechatfe.github.io/delete/" + num2 + ".jpg";
-    var pm3 = "http://wechatfe.github.io/delete/" + num3 + ".jpg";
-    var pm4 = "http://wechatfe.github.io/delete/" + num4 + ".jpg";
+    var pm1 = "https://weixin.spdbccc.com.cn/wxrp-page-arithmetic/arithmetic/img3/d" + num1 + ".png";
+    var pm2 = "https://weixin.spdbccc.com.cn/wxrp-page-arithmetic/arithmetic/img3/d" + num2 + ".jpg";
+    var pm3 = "https://weixin.spdbccc.com.cn/wxrp-page-arithmetic/arithmetic/img3/d" + num3 + ".jpg";
+    var pm4 = "https://weixin.spdbccc.com.cn/wxrp-page-arithmetic/arithmetic/img3/d" + num4 + ".jpg";
     $("#barrage1 img").attr("src", pm1);
     $("#barrage2 img").attr("src", pm2);
     $("#barrage3 img").attr("src", pm3);
@@ -91,7 +91,6 @@ function autoSolve() {
 
     var operators = $(".fhBox li img");
     var operatorBoxs = $(".box span");
-    var numbers = $('.zmP');
     var numberBoxs = $(".box p");
 
     //基本不变的js 每一个容器的位置
@@ -137,27 +136,54 @@ function autoSolve() {
     }
 
     var used = [];
+
     function addNumber(iBox, number) {
+        var find = false;
         for (var iNum = 0; iNum < 4; iNum++) {
-            if (Num[iNum] === parseInt(number) && used.indexOf(iNum) === -1)
+            if (Num[iNum] === parseInt(number) && used.indexOf(iNum) === -1) {
+                find = true;
                 break;
+            }
+        }
+        if (!find) {
+            return alert('can\'t find number ' + number + ' for box ' + (iBox + 1));
         }
         used.push(iNum);
-        $(numbers[iNum]).css({
+
+        var numberTrue = '',numberEncrypt = '';
+        if (iNum === 0) {
+            numberTrue = Cookies.get("wxrpCookArithmeticFisrtColor");
+            numberEncrypt = Cookies.get("wxrpCookArithmeticFisrtNum");
+        } else if (iNum === 1) {
+            numberTrue = Cookies.get("wxrpCookArithmeticTwoColor");
+            numberEncrypt = Cookies.get("wxrpCookArithmeticTwoNum");
+        } else if (iNum === 2) {
+            numberTrue = Cookies.get("wxrpCookArithmeticThreeColor");
+            numberEncrypt = Cookies.get("wxrpCookArithmeticThreeNum");
+        } else if (iNum === 3) {
+            numberTrue = Cookies.get("wxrpCookArithmeticFourColor");
+            numberEncrypt = Cookies.get("wxrpCookArithmeticFourNum");
+        }
+
+        var newPmSrc = "arithmetic/img4/" + numberTrue + ".png";
+
+        $('#barrage' + (iNum + 1) + ' img').attr("src", newPmSrc);
+
+        $('#barrage' + (iNum + 1)).css({
             "left": boxOffset[iBox].left,
             "top": boxOffset[iBox].top,
             "width": box1W,
             "height": box1H
         });
-        Cookies.set("wxrpCookArithmeticBox" + (iBox + 1), number);
+        Cookies.set("wxrpCookArithmeticBox" + (iBox + 1), numberEncrypt);
     }
 
 
     var Num = [
-        parseInt(Cookies.get("wxrpCookArithmeticFisrtNum")),
-        parseInt(Cookies.get("wxrpCookArithmeticTwoNum")),
-        parseInt(Cookies.get("wxrpCookArithmeticThreeNum")),
-        parseInt(Cookies.get("wxrpCookArithmeticFourNum"))
+        parseInt(Cookies.get("wxrpCookArithmeticFisrtColor").replace(/[abcd]/g, '')),
+        parseInt(Cookies.get("wxrpCookArithmeticTwoColor").replace(/[abcd]/g, '')),
+        parseInt(Cookies.get("wxrpCookArithmeticThreeColor").replace(/[abcd]/g, '')),
+        parseInt(Cookies.get("wxrpCookArithmeticFourColor").replace(/[abcd]/g, ''))
     ];
 
     var result = calc24(Num[0], Num[1], Num[2], Num[3]);
