@@ -46,6 +46,23 @@ function gen_rand() {
     $('.bmP').hide();
 }
 
+function is_number(char) {
+    if (typeof char === 'string')
+        char = char.charCodeAt(0);
+    return 48 <= char && char <= 57
+}
+
+function showMsg(str, timeout) {
+    var rand = parseInt(Math.random()*1000000);
+    var msg_id = 'append-msg-'+rand;
+    var appendHtml = '<div id="'+msg_id+'" style="position: fixed;right: 0;width: 100%;margin-top: 64px; height: auto;z-index:99999999;text-align: center;background-color: rgba(222, 222, 222, 0.4);">'+str+'</div>';
+    $('body').prepend(appendHtml);
+    function hide() {
+        $('#'+msg_id).remove();
+    }
+    setTimeout(hide, timeout);
+}
+
 function autoSolve() {
 
     function calc24() {
@@ -80,28 +97,50 @@ function autoSolve() {
             }
         })(expression);
 
-        var ret = result.length ? result[0] : null;
-        if (ret) {
-            // 化简结果, 去除多余 ()
-            var test;
-            if (test = /\((\(\d+[\+\-]\d+\))[\+\-]\d+\)/.exec(ret)) {
-                ret = ret.replace(test[1], test[1].replace(/[\(\)]/g, ''))
-            }
+        for (var i = 0; i < result.length; i++) {
+            var ret = result[i];
+            if (ret) {
+                // 化简结果, 去除多余 ()
+                var test;
 
-            if (test = /\(\d+[\+\-](\(\d+[\+\-]\d+\))\)/.exec(ret)) {
-                ret = ret.replace(test[1], test[1].replace(/[\(\)]/g, ''))
-            }
+                // ((1+2)+3)   ((1-2)+3)
+                if (test = /\((\(\d+[\+\-]\d+\))[\+\-]\d+\)/.exec(ret)) {
+                    ret = ret.replace(test[1], test[1].replace(/[\(\)]/g, ''));
+                }
 
-            if (test = /\((\(\d+[\*\/]\d+\))[\*\/]\d+\)/.exec(ret)) {
-                ret = ret.replace(test[1], test[1].replace(/[\(\)]/g, ''))
-            }
+                // (3+(2+1)) (3+(2-1))
+                if (test = /\(\d+\+(\(\d+[\+\-]\d+\))\)/.exec(ret)) {
+                    ret = ret.replace(test[1], test[1].replace(/[\(\)]/g, ''));
+                }
 
-            if (test = /\(\d+[\*\/](\(\d+[\*\/]\d+\))\)/.exec(ret)) {
-                ret = ret.replace(test[1], test[1].replace(/[\(\)]/g, ''))
+                // (3-(2+1)) (3-(2-1))
+                if (test = /\(\d+\-(\(\d+[\+\-]\d+\))\)/.exec(ret)) {
+                    ret = ret.replace(test[1], test[1].replace(/[\(\)]/g, '').replace('-', 'A').replace('+', '-').replace('A', '+'));
+                }
+
+                // ((1*2)*3)   ((1*2)*3)
+                if (test = /\((\(\d+[\*\/]\d+\))[\*\/]\d+\)/.exec(ret)) {
+                    ret = ret.replace(test[1], test[1].replace(/[\(\)]/g, ''));
+                }
+
+                // (3*(2*1)) (3*(2/1))
+                if (test = /\(\d+\*(\(\d+[\*\/]\d+\))\)/.exec(ret)) {
+                    ret = ret.replace(test[1], test[1].replace(/[\(\)]/g, ''));
+                }
+
+                // (3/(2*1)) (3/(2/1))
+                if (test = /\(\d+\/(\(\d+[\*\/]\d+\))\)/.exec(ret)) {
+                    ret = ret.replace(test[1], test[1].replace(/[\(\)]/g, '').replace('*', 'D').replace('/', '*').replace('D', '/'));
+                }
             }
+            result[i] = ret;
+            if ((!is_number(ret[0]) && !is_number(ret[1])) || !is_number(ret[ret.length - 1]) && !is_number(ret[ret.length - 2])) {
+                continue;
+            }
+            return ret;
         }
 
-        return ret;
+        return result.length ? result[0] : null;
     }
 
     var operators = $(".fhBox li img");
@@ -206,10 +245,11 @@ function autoSolve() {
         return alert('can\'t find solution for ' + Num[0] + ' ' + Num[1] + ' ' + Num[2] + ' ' + Num[3]);
     }
 
+    showMsg(result,2000);
     console.log('[solved] ' + result);
 
     for (var i = 0, numIndex = 0, opIndex = 0; i < result.length; i++) {
-        if (/\d/.test(result[i])) {
+        if (is_number(result[i])) {
             if (numIndex === 0) {
                 opIndex = 1; // 第0个数字框 后面
             } else if (numIndex === 1) {
@@ -220,7 +260,7 @@ function autoSolve() {
                 opIndex = 8;
             }
             var nowNumber = result[i];
-            if (/\d/.test(result[i + 1])) {
+            if (is_number(result[i + 1])) {
                 nowNumber = nowNumber + '' + result[i + 1];
                 i++;
             }
