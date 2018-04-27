@@ -53,49 +53,74 @@ function is_number(char) {
 }
 
 function showMsg(str, timeout) {
-    var rand = parseInt(Math.random()*1000000);
-    var msg_id = 'append-msg-'+rand;
-    var appendHtml = '<div id="'+msg_id+'" style="position: fixed;right: 0;width: 100%;margin-top: 64px; height: auto;z-index:99999999;text-align: center;background-color: rgba(222, 222, 222, 0.4);">'+str+'</div>';
+    var rand = parseInt(Math.random() * 1000000);
+    var msg_id = 'append-msg-' + rand;
+    var appendHtml = '<div id="' + msg_id + '" style="position: fixed;right: 0;width: 100%;margin-top: 64px; height: auto;z-index:99999999;text-align: center;background-color: rgba(222, 222, 222, 0.4);">' + str + '</div>';
     $('body').prepend(appendHtml);
+
     function hide() {
-        $('#'+msg_id).remove();
+        $('#' + msg_id).remove();
     }
+
     setTimeout(hide, timeout);
 }
+
+var solution_index = -1;
 
 function autoSolve() {
 
     function calc24() {
-        var expression = [].slice.call(arguments).sort();
-        var operator = ['+', '-', '*', '/'], result = [], hash = {};
-        (function (expression) {
-            var len = expression.length;
-            var group_str = expression.slice(0).sort().toString();
-            if (!hash[group_str]) {
-                hash[group_str] = true;
-                if (len > 1) {
-                    for (var i = 0; i < len - 1; i++) {
-                        for (var j = i + 1; j < len; j++) {
-                            var sort_expression = expression.slice(0);
-                            var exp1 = sort_expression.splice(j, 1)[0];
-                            var exp2 = sort_expression.splice(i, 1)[0];
+        var p = [].slice.call(arguments).sort();
+        var q = ['+', '-', '*', '/'],
+            result = [],
+            hash = {};
+        (function (a) {
+            var b = a.length;
+            var c = a.slice(0).sort().toString();
+            if (!hash[c]) {
+                hash[c] = true;
+                if (b > 1) {
+                    for (var i = 0; i < b - 1; i++) {
+                        for (var j = i + 1; j < b; j++) {
+                            var d = a.slice(0);
+                            var e = d.splice(j, 1)[0];
+                            var f = d.splice(i, 1)[0];
+                            var g = eval(f);
+                            if (g < 0) continue;
+                            if (g.toString().indexOf(".") !== -1) continue;
+                            var h = 0;
                             for (var n = 0; n < 4; n++) {
-                                if (result.length) return; // find then exit
-                                var new_expression = sort_expression.slice(0);
-                                new_expression.splice(0, 0, n > 1 || len === 2 ? exp1 + operator[n] + exp2 : '(' + exp1 + operator[n] + exp2 + ')');
-                                arguments.callee(new_expression);
-                                if (exp1 !== exp2 && n % 2) {
-                                    new_expression.splice(0, 1, n > 1 || len === 2 ? exp2 + operator[n] + exp1 : '(' + exp2 + operator[n] + exp1 + ')');
-                                    arguments.callee(new_expression);
+                                var k = d.slice(0);
+                                k.splice(0, 0, n > 1 || b === 2 ? e + q[n] + f : '(' + e + q[n] + f + ')');
+                                arguments.callee(k);
+                                if (e !== f && n % 2) {
+                                    k.splice(0, 1, n > 1 || b === 2 ? f + q[n] + e : '(' + f + q[n] + e + ')');
+                                    arguments.callee(k)
                                 }
                             }
                         }
                     }
-                } else if (Math.abs(eval(expression[0]) - 24) < 1e-6) {
-                    result.push(expression[0]);
+                } else if (eval(a[0]) === 24) {
+                    var l = a[0];
+                    if (a[0].indexOf("((") !== -1) {
+                        l = a[0].replace("((", "(").replace(')', '')
+                    } else if (a[0].indexOf("))") !== -1) {
+                        l = a[0].replace("))", ")");
+                        var m = l.lastIndexOf("(");
+                        l = l.substring(0, m) + l.substr(m + 1)
+                    }
+                    if (eval(l) === 24) {
+                        var o = l.replace("(", "").replace("(", "").replace(")", "").replace(")", "");
+                        if (eval(o) === 24) result.push(o);
+                        else result.push(l)
+                    } else {
+                        result.push(a[0])
+                    }
                 }
             }
-        })(expression);
+        })(p);
+
+        console.log(result);
 
         for (var i = 0; i < result.length; i++) {
             var ret = result[i];
@@ -137,9 +162,18 @@ function autoSolve() {
             if ((!is_number(ret[0]) && !is_number(ret[1])) || !is_number(ret[ret.length - 1]) && !is_number(ret[ret.length - 2])) {
                 continue;
             }
+            if (solution_index === result.length - 1) {
+                solution_index = -1
+            }
+
+            if (i <= solution_index) {
+                continue;
+            }
+            solution_index = i;
             return ret;
         }
 
+        console.log('error');
         return result.length ? result[0] : null;
     }
 
@@ -245,7 +279,7 @@ function autoSolve() {
         return alert('can\'t find solution for ' + Num[0] + ' ' + Num[1] + ' ' + Num[2] + ' ' + Num[3]);
     }
 
-    showMsg(result,2000);
+    showMsg(result, 2000);
     console.log('[solved] ' + result);
 
     for (var i = 0, numIndex = 0, opIndex = 0; i < result.length; i++) {
