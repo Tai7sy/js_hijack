@@ -1,7 +1,7 @@
 ## js_hijack
 在微信浏览器的每个页面插入自己的JS代码
 
-1. 扫码开启调试模式<br>
+1. 扫码开启调试模式(安装线上TBS内核)<br>
 ![http://res.imtt.qq.com/tbs_inspect/x5-debug.html](https://chart.googleapis.com/chart?cht=qr&chs=150x150&chl=http://res.imtt.qq.com/tbs_inspect/x5-debug.html)<br>
 新版本内核弹出调试开关确认；旧内核请点击下载TBS内核；(无法自动跳转直接看第三步)
 2. 没有TBS内核或内核版本过低请"安装线上TBS内核"，安装完成之后重新扫描二维码；
