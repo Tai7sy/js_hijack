@@ -23,6 +23,10 @@
     if (url.indexOf('weixin.spdbccc.com.cn/wxrp-page-arithmetic/arithmeticGameIndex') > -1) {
         return loadScript('js/pufa_24.js');
     }
+
+    if (url.indexOf('weixin.spdbccc.com.cn/wxrp-page-redpacketsgame/gameIndexjsp') > -1) {
+        return loadScript('js/pufa_yishuadaodi.js');
+    }
 })();
 
 window.VConsole = function () {
