@@ -187,7 +187,7 @@ function autoSolve (autoSubmit) {
 
     g_start.ed = 1;
     m_route.push(g_start);
-    // console.log('find_route:', find_route(g_start));
+    showMsg('find_route: <br>' +  find_route(g_start));
 
 }
 
@@ -197,5 +197,5 @@ function autoSolve (autoSubmit) {
     var appendHtml = '<button id="append-content-btn" style="position: fixed;right: 0;width: 50px;height: 30px;z-index:99999999;text-align: center;background-color: white" onclick="autoSolve(1)">提交</button>' +
         '<button id="append-content-btn" style="position: fixed;right: 50px;width: 50px;height: 30px;z-index:99999999;text-align: center;background-color: white" onclick="autoSolve()">解答</button>';
     $('body').prepend(appendHtml);
-    showMsg('[浦发助手] Injected !',1000)
+    showMsg('[Tai7sy] Injected !',1000)
 })();
