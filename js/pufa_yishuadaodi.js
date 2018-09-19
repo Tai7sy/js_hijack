@@ -23,7 +23,7 @@ function autoSolve (autoSubmit) {
     var g_cnt_x = Math.round(g_container.width() / (g_element_start.width() + 12));
     var g_cnt_y = g_elements_arr.length / g_cnt_x;
 
-    console.log('行列检测: ', g_cnt_x, g_cnt_y);
+    // console.log('行列检测: ', g_cnt_x, g_cnt_y);
 
     var g_table = [];
     var g_start = null;
@@ -113,7 +113,7 @@ function autoSolve (autoSubmit) {
             }
         }
 
-        console.log(route);
+        // console.log(route);
     }
 
     var m_route = [];
@@ -160,7 +160,7 @@ function autoSolve (autoSubmit) {
 
 
         if (isDone()) {
-            console.log('Done:');
+            // console.log('Done:');
             print_arr(m_route);
             showMsg('OK', 1000);
             if(autoSubmit){
@@ -170,7 +170,7 @@ function autoSolve (autoSubmit) {
         }
 
         if (m_route.length === 0) {
-            console.log('无解');
+            // console.log('无解');
             showMsg('无解', 1000);
             return false;
         }
@@ -187,7 +187,7 @@ function autoSolve (autoSubmit) {
 
     g_start.ed = 1;
     m_route.push(g_start);
-    console.log('find_route:', find_route(g_start));
+    // console.log('find_route:', find_route(g_start));
 
 }
 
@@ -197,5 +197,5 @@ function autoSolve (autoSubmit) {
     var appendHtml = '<button id="append-content-btn" style="position: fixed;right: 0;width: 50px;height: 30px;z-index:99999999;text-align: center;background-color: white" onclick="autoSolve(1)">提交</button>' +
         '<button id="append-content-btn" style="position: fixed;right: 50px;width: 50px;height: 30px;z-index:99999999;text-align: center;background-color: white" onclick="autoSolve()">解答</button>';
     $('body').prepend(appendHtml);
-    console.log('[浦发助手] Injected !')
+    showMsg('[浦发助手] Injected !',1000)
 })();
